@@ -71,7 +71,7 @@ class IDEFICS2(BaseModel):
         model = AutoModelForVision2Seq.from_pretrained(
             model_path,
             torch_dtype=torch.bfloat16,
-            _attn_implementation="flash_attention_2",
+            _attn_implementation="eager",
             device_map="auto")
         self.model = model
 
