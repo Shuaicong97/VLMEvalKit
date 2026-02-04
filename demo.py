@@ -1,10 +1,14 @@
-# First: export GOOGLE_API_KEY="Your API_KEY"
-
-# Optional: Resize, Sampling frames
 import glob
 import os
 
 from vlmeval.config import supported_VLM
+
+# 1. Gemini
+# model = supported_VLM['GeminiPro2-5']()
+# 2. GPT-4V
+# model = supported_VLM['gpt-5.1-2025-11-13']()
+# 3. Claude
+# model = supported_VLM['Claude4_Sonnet']()
 model = supported_VLM['Idefics3-8B-Llama3']()
 
 
@@ -13,20 +17,21 @@ def build_spatial_grounding_prompt(query):
 Given the query {query}, for each frame, detect and localize all the visual contents described by the given textual query in JSON format. 
 If the visual content does not exist in a frame, skip that frame. 
 Output Format: 
-[{
+[
+{{
     "object_id": 1, 
     "frames": [
-    {"time": 1, "bbox_2d": [x_min, y_min, x_max, y_max]},
-    {"time": 2, "bbox_2d": [x_min, y_min, x_max, y_max]},
+    {{"time": 1, "bbox_2d": [x_min, y_min, x_max, y_max]}},
+    {{"time": 2, "bbox_2d": [x_min, y_min, x_max, y_max]}},
     ]
- },
- {
+ }},
+ {{
     "object_id": 2, 
     "frames": [
-    {"time": 2, "bbox_2d": [x_min, y_min, x_max, y_max]},
-    {"time": 4, "bbox_2d": [x_min, y_min, x_max, y_max]},
+    {{"time": 2, "bbox_2d": [x_min, y_min, x_max, y_max]}},
+    {{"time": 4, "bbox_2d": [x_min, y_min, x_max, y_max]}},
     ]
- }]
+ }}]
 
 Notes:
 - Do NOT include explanations.
@@ -45,17 +50,7 @@ Please answer using EXACTLY the following format:
 Only output the final answer in ONE line, no explanation.
 """
 
-img_dir = "/nfs/data3/shuaicong/TempRMOT/refer-ovis/OVIS/valid/e3d901dd"
-image_paths = sorted(glob.glob(os.path.join(img_dir, "*.jpg")))
-print(image_paths[:5])  # 看一下前几个
-inputs = image_paths + [
-    build_spatial_grounding_prompt("The boat moves in a circle around a yellow object on the sea")
-]
-
-ret = model.generate(inputs)
-print(ret)
-
-
-# # Forward Multiple Images
-# ret = model.generate(['assets/apple.jpg', 'assets/apple.jpg', 'How many apples are there in the provided images? '])
-# print(ret)  # There are two apples in the provided images.
+# Forward Multiple Images
+ret = model.generate(['assets1NJOQ.mp4',
+                      'What happened in th video?']) # OOM => only 2 images
+print(ret)  # There are two apples in the provided images.
