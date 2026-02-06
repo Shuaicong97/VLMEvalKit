@@ -51,6 +51,5 @@ Only output the final answer in ONE line, no explanation.
 """
 
 # Forward Multiple Images
-ret = model.generate(['assets1NJOQ.mp4',
-                      'What happened in th video?']) # OOM => only 2 images
+ret = model.generate(['assets/apple.jpg', 'assets/apple.jpg', 'How many apples are there in the provided images? ']) # OOM => only 2 images
 print(ret)  # There are two apples in the provided images.

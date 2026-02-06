@@ -77,9 +77,11 @@ def resize_with_scale(img, scale):
 
 # 1. Gemini
 # model = supported_VLM['GeminiPro2-5']()
-# 2. GPT-4V
-# model = supported_VLM['gpt-5.1-2025-11-13']()
-# 3. Claude
+# 2. GPT-4v
+# model = supported_VLM['GPT4V_HIGH']()
+# 3. GPT-4o
+# model = supported_VLM['ChatGPT4o']()
+# 4. Claude
 # model = supported_VLM['Claude4_Sonnet']()
 from vlmeval.config import supported_VLM
 model = supported_VLM['Idefics3-8B-Llama3']()
@@ -153,6 +155,7 @@ def worker_process(worker_id, video_list, args, output_json_path):
         scale = (scale_w, scale_h)
 
         resized_images = sample_frames(resized_images, args.nframe)
+        logging.info(f"[Worker {worker_id}] Video {video_name} uses {args.nframe} frames")
 
         for query in queries:
             if (video_name, query) in finished_pairs:
@@ -160,7 +163,11 @@ def worker_process(worker_id, video_list, args, output_json_path):
                     f"[Worker {worker_id}] Skip (ckpt): {video_name} | {query}"
                 )
                 continue
-            prompt = build_temporal_grounding_prompt(query)
+
+            if args.spatial:
+                prompt = build_spatial_grounding_prompt(query)
+            else:
+                prompt = build_temporal_grounding_prompt(query)
 
             inputs = resized_images + [prompt]
             ret = model.generate(inputs)
@@ -185,10 +192,12 @@ def main():
     parser = argparse.ArgumentParser(description="Video Temporal Grounding with api")
     parser.add_argument("--query_json", type=str, default="data/queries_ovis.json", help="ovis / mot17 / mot20")
     parser.add_argument("--image_root", type=str, default="datasets/OVIS/valid", help="ovis / mot17 / mot20")
-    parser.add_argument("--resize", action="store_true", help="Enable resize of images according to long_max/short_min rules")
+    parser.add_argument("--resize", action="store_true", help="enable resize of images according to long_max/short_min rules")
     parser.add_argument("--nframe", type=int, default=-1, help="-1 means all frames, or 16, 64 etc.")
     parser.add_argument("--num_workers", type=int, default=4)
     parser.add_argument("--output_dir", type=str, default="outputs")
+    parser.add_argument("--spatial", action="store_true", help="use the spatial grounding prompt")
+
     args = parser.parse_args()
     os.makedirs(args.output_dir, exist_ok=True)
 
