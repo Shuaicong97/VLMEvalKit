@@ -24,11 +24,11 @@ So please try the following commands. Do the temporal grounding first:
 
 1. Use all images to see if OOM occurs.
 `python llm_temporal.py --query_json PATH_TO_QUERIES --image_root PATH_TO_IMAGE --output_dir PATH_TO_OUTPUTS`
-2. Use --resize to resize the images and also take all images.
+2. Use --resize to resize the images and also take all images. (for comparison, the scale should be the same)
 `python llm_temporal.py --query_json PATH_TO_QUERIES --image_root PATH_TO_IMAGE --resize --output_dir PATH_TO_OUTPUTS`
-3. Use --nframe 64.
+3. Use --nframe 64. (try also 128/256 as well)
 `python llm_temporal.py --query_json PATH_TO_QUERIES --image_root PATH_TO_IMAGE --nframe 64 --output_dir PATH_TO_OUTPUTS`
-4. Use --resize and --nframe.
+4. Use --resize and --nframe. (no need)
 `python llm_temporal.py --query_json PATH_TO_QUERIES --image_root PATH_TO_IMAGE --resize --nframe 64 --output_dir PATH_TO_OUTPUTS`
 
 Do the temporal task and use OVIS first.

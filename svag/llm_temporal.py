@@ -46,7 +46,7 @@ Please answer using EXACTLY the following format:
 Only output the final answer in ONE line, no explanation.
 """
 
-def compute_resize_scale(img_path, long_max=500, short_min=250):
+def compute_resize_scale(img_path, long_max=420, short_min=240):
     img = Image.open(img_path)
     w, h = img.size
 
