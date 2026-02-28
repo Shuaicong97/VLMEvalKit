@@ -8,6 +8,9 @@ from glob import glob
 import logging
 import numpy as np
 
+from svag.test import sub_lists
+
+
 def build_spatial_grounding_prompt(query):
     return f"""
 Given the query {query}, for each frame, detect and localize all the visual contents described by the given textual query in JSON format. 
@@ -196,6 +199,18 @@ def worker_process(worker_id, video_list, args):
 
     logging.info(f"[Worker {worker_id}] Done")
 
+def split_videos(video_items, num_workers):
+    num_videos = len(video_items)
+    per_worker = num_videos // num_workers
+    remainder = num_videos % num_workers
+
+    sub_lists = []
+    start = 0
+    for i in range(num_workers):
+        end = start + per_worker + (1 if i < remainder else 0)
+        sub_lists.append(video_items[start:end])
+        start = end
+    return sub_lists
 
 def main():
     parser = argparse.ArgumentParser(description="Video Temporal Grounding with api")
@@ -225,19 +240,15 @@ def main():
         queries_data = json.load(f)
 
     video_items = list(queries_data.items())
-    num_videos = len(video_items)
     num_workers = args.num_workers
-    per_worker = num_videos // num_workers
+
+    sub_lists = split_videos(video_items, num_workers)
     processes = []
 
     logging.info("Start")
     start_time = time.time()
-    for i in range(num_workers):
-        if i == num_workers - 1:
-            sub_list = video_items[i * per_worker:]
-        else:
-            sub_list = video_items[i * per_worker:(i + 1) * per_worker]
-
+    for i, sub_list in enumerate(sub_lists):
+        print(f"Worker {i}: {lst}")
         p = mp.Process(target=worker_process, args=(i, sub_list, args))
         p.start()
         processes.append(p)

@@ -15,7 +15,7 @@ Use file [llm_temporal.py](llm_temporal.py), modify the model name:
 `model = supported_VLM['Idefics3-8B-Llama3']()`.
 
 We have three datasets: OVIS, MOT17, MOT20. And we only use the **valid** subset.
-num_workers is 4 (GPUs) by default.
+num_workers is 4 (GPUs) by default. There are only 2 videos in MOT20.
 
 This repo uses only 16/64 frames to do their tasks, e.g., VQA, MCQ.
 But it's not enough for our task.
