@@ -9,7 +9,7 @@ from vlmeval.config import supported_VLM
 # model = supported_VLM['gpt-5.1-2025-11-13']()
 # 3. Claude
 # model = supported_VLM['Claude4_Sonnet']()
-model = supported_VLM['Idefics3-8B-Llama3']()
+model = supported_VLM['molmo-7B-O-0924']()
 
 
 def build_spatial_grounding_prompt(query):
@@ -51,5 +51,5 @@ Only output the final answer in ONE line, no explanation.
 """
 
 # Forward Multiple Images
-ret = model.generate(['assets/apple.jpg', 'assets/apple.jpg', 'How many apples are there in the provided images? ']) # OOM => only 2 images
-print(ret)  # There are two apples in the provided images.
+ret = model.generate(['assets/apple.jpg', 'How many apples are there in the provided images? '])
+print(ret)

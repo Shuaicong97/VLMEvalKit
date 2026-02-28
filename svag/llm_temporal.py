@@ -40,13 +40,22 @@ You are performing temporal grounding for a video.
 
 Event: "{query}"
 
-Please answer using EXACTLY the following format:
-{query} from frame <start_frame> to <end_frame>
+There may be multiple objects that satisfy the query.
 
-Only output the final answer in ONE line, no explanation.
+For each object:
+- Identify its object_id
+- Identify its start frame
+- Identify its end frame
+
+Please answer using EXACTLY the following format:
+object_id: <id>
+start_frame: <time>
+end_frame: <time>
+
+One block per object. No explanation.
 """
 
-def compute_resize_scale(img_path, long_max=420, short_min=240):
+def compute_resize_scale(img_path, long_max=448, short_min=252):
     img = Image.open(img_path)
     w, h = img.size
 

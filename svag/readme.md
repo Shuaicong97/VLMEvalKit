@@ -24,12 +24,13 @@ So please try the following commands. Do the temporal grounding first:
 
 1. Use all images to see if OOM occurs.
 `python llm_temporal.py --query_json PATH_TO_QUERIES --image_root PATH_TO_IMAGE --output_dir PATH_TO_OUTPUTS`
-2. Use --resize to resize the images and also take all images. (for comparison, the scale should be the same)
-`python llm_temporal.py --query_json PATH_TO_QUERIES --image_root PATH_TO_IMAGE --resize --output_dir PATH_TO_OUTPUTS`
-3. Use --nframe 64. (try also 128/256 as well)
+2. Use --nframe 256. (try also 128/64/32 as well). A possible summary table looks like Table 5 in [LongVideoBench](https://arxiv.org/pdf/2407.15754).
 `python llm_temporal.py --query_json PATH_TO_QUERIES --image_root PATH_TO_IMAGE --nframe 64 --output_dir PATH_TO_OUTPUTS`
-4. Use --resize and --nframe. (no need)
+3. Use --resize to resize the images and also take all images. (for comparison, the scale should be the same)
+`python llm_temporal.py --query_json PATH_TO_QUERIES --image_root PATH_TO_IMAGE --resize --output_dir PATH_TO_OUTPUTS`
+4. Use --resize and --nframe. (mostly no need)
 `python llm_temporal.py --query_json PATH_TO_QUERIES --image_root PATH_TO_IMAGE --resize --nframe 64 --output_dir PATH_TO_OUTPUTS`
 
 Do the temporal task and use OVIS first.
 Then add `--spatial` to do the spatial grounding.
+Then test on MOT17 and MOT20.
