@@ -124,7 +124,7 @@ def sample_frames(image_list, nframe):
     sampled = [image_list[i] for i in indices]
     return sampled
 
-def worker_process(worker_id, video_list, args, output_json_path):
+def worker_process(worker_id, video_list, args):
     logging.info(f"[Worker {worker_id}] Start processing {len(video_list)} videos")
 
     checkpoint_path = os.path.join(
@@ -190,11 +190,11 @@ def worker_process(worker_id, video_list, args, output_json_path):
             finished_pairs.add((video_name, query))
             logging.info(f"[Worker {worker_id}] Video {video_id}, Query: {query}, Response: {ret}")
 
-    logging.info(f"[Worker {worker_id}] Done")
+        output_json_path = os.path.join(args.output_dir, f"{video_name}.json")
+        with open(output_json_path, "w") as f:
+            json.dump(video_results, f, ensure_ascii=False)
 
-    with open(output_json_path, "w") as f:
-        json.dump(video_results, f, ensure_ascii=False)
-    logging.info(f"[Worker {worker_id}] Results saved to {output_json_path}")
+    logging.info(f"[Worker {worker_id}] Done")
 
 
 def main():
@@ -238,11 +238,7 @@ def main():
         else:
             sub_list = video_items[i * per_worker:(i + 1) * per_worker]
 
-        output_json_path = os.path.join(
-            args.output_dir, f"output_worker_{i}.json"
-        )
-
-        p = mp.Process(target=worker_process, args=(i, sub_list, args, output_json_path))
+        p = mp.Process(target=worker_process, args=(i, sub_list, args))
         p.start()
         processes.append(p)
 
