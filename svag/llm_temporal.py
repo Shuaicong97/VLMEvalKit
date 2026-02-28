@@ -8,9 +8,6 @@ from glob import glob
 import logging
 import numpy as np
 
-from svag.test import sub_lists
-
-
 def build_spatial_grounding_prompt(query):
     return f"""
 Given the query {query}, for each frame, detect and localize all the visual contents described by the given textual query in JSON format. 
