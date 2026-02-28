@@ -248,7 +248,7 @@ def main():
     logging.info("Start")
     start_time = time.time()
     for i, sub_list in enumerate(sub_lists):
-        print(f"Worker {i}: {lst}")
+        print(f"Worker {i}: {sub_list}")
         p = mp.Process(target=worker_process, args=(i, sub_list, args))
         p.start()
         processes.append(p)
