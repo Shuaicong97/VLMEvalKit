@@ -1,4 +1,4 @@
-![LOGO](http://opencompass.openxlab.space/utils/MMLB.jpg)
+![LOGO](https://opencompass.openxlab.space/utils/MMLB.jpg)
 
 <b>A Toolkit for Evaluating Large Vision-Language Models. </b>
 
@@ -33,6 +33,8 @@ English | [简体中文](/docs/zh-CN/README_zh-CN.md) | [日本語](/docs/ja/REA
 - **[2025-08-04]** In [PR 1175](https://github.com/open-compass/VLMEvalKit/pull/1175), we refine the `can_infer_option` and `can_infer_text`, which increasingly route the evaluation to LLM choice extractors and empirically leads to slight performance improvement for MCQ benchmarks.
 
 ## 🆕 News
+
+- **[2026-04-08]** Supported [**Video-MME-v2**](https://github.com/MME-Benchmarks/Video-MME-v2). Video-MME-v2 is an authoritative benchmark towards the next stage in video understanding evaluation. 🔥🔥🔥
 - **[2025-07-07]** Supported [**SeePhys**](https://seephys.github.io/), which is a ​full spectrum multimodal benchmark for evaluating physics reasoning across different knowledge levels. thanks to [**Quinn777**](https://github.com/Quinn777) 🔥🔥🔥
 - **[2025-07-02]** Supported [**OvisU1**](https://huggingface.co/AIDC-AI/Ovis-U1-3B), thanks to [**liyang-7**](https://github.com/liyang-7) 🔥🔥🔥
 - **[2025-06-16]** Supported [**PhyX**](https://phyx-bench.github.io/), a benchmark aiming to assess capacity for physics-grounded reasoning in visual scenarios. 🔥🔥🔥
@@ -71,7 +73,10 @@ Note that some VLMs may not be able to run under certain transformer versions, w
 - **Please use** `transformers==4.42.0` **for**: `AKI`.
 - **Please use** `transformers==4.44.0` **for**: `Moondream2`, `H2OVL series`.
 - **Please use** `transformers==4.45.0` **for**: `Aria`.
-- **Please use** `transformers==latest` **for**: `LLaVA-Next series`, `PaliGemma-3B`, `Chameleon series`, `Video-LLaVA-7B-HF`, `Ovis series`, `Mantis series`, `MiniCPM-V2.6`, `OmChat-v2.0-13B-sinlge-beta`, `Idefics-3`, `GLM-4v-9B`, `VideoChat2-HD`, `RBDash_72b`, `Llama-3.2 series`, `Kosmos series`.
+- **Please use** `transformers==4.48.0` (or `4.46.0`) **for**: `LLaVA-Next series` (e.g., `llava-hf/llava-v1.6-vicuna-7b-hf`).
+- **Please use** `transformers==latest` **for**: `PaliGemma-3B`, `Chameleon series`, `Video-LLaVA-7B-HF`, `Ovis series`, `Mantis series`, `MiniCPM-V2.6`, `OmChat-v2.0-13B-sinlge-beta`, `Idefics-3`, `GLM-4v-9B`, `VideoChat2-HD`, `RBDash_72b`, `Llama-3.2 series`, `Kosmos series`.
+- **Please use** `transformers==4.50.3` (or `4.46.1` or `4.51` or `4.53`) **for**: `Molmo series`.
+- **Please use** `transformers>=5.2.0` **for**: `Qwen3.5 series`.
 
 **Torchvision Version Recommendation:**
 
