@@ -1723,7 +1723,7 @@ cogvlm_series = {
     "glm-4v-9b": partial(vlm.GLM4v, model_path="THUDM/glm-4v-9b"),
     "GLM4_1VThinking-9b": partial(vlm.GLMThinking, model_path="THUDM/GLM-4.1V-9B-Thinking"),
     "GLM4_5V": partial(vlm.GLMThinking, model_path="THUDM/GLM-4.5V"),
-    "GLM4_6V": partial(vlm.GLMThinking, model_path="THUDM/GLM-4.6V"),
+    "GLM4_6V": partial(vlm.GLMThinking, model_path="zai-org/GLM-4.6V"),
     "GLM4_6V-api": partial(
         api.LMDeployAPI,
         api_base="http://0.0.0.0:8000/v1/chat/completions",

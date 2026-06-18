@@ -88,15 +88,14 @@ def resize_with_scale(img, scale):
 # 1. Gemini
 # model = supported_VLM['GeminiPro2-5']()
 # 2. GPT-4v
+# model = supported_VLM['GPT4V_HIGH']()
 # 3. GPT-4o
 # model = supported_VLM['ChatGPT4o']()
 # 4. Claude
 # model = supported_VLM['Claude4_Sonnet']()
 # Idefics3-8B-Llama3
 from vlmeval.config import supported_VLM
-# model = supported_VLM['GLM4_6V']()
-# model = supported_VLM['GPT4V_20240409']()
-model = supported_VLM['gpt-5.1-2025-11-13']()
+model = supported_VLM['GLM4_6V']()
 
 def load_checkpoint(path):
     finished = set()
@@ -118,22 +117,17 @@ def append_checkpoint(path, video_name, query):
     with open(path, "a", encoding="utf-8") as f:
         f.write(f"{video_name}: {query}\n")
 
-def sample_frames(image_list, nframe, save_index_path=None):
+def sample_frames(image_list, nframe):
     total = len(image_list)
     if nframe == -1 or nframe >= total:
         return image_list
 
     indices = np.linspace(0, total - 1, nframe, dtype=int)
     sampled = [image_list[i] for i in indices]
-
-    if save_index_path is not None:
-        with open(save_index_path, "w") as f:
-            for idx in indices:
-                f.write(f"{idx}\n")
-    return sampled, indices.tolist()
+    return sampled
 
 def worker_process(worker_id, video_list, args):
-    logging.info(f"[Worker {worker_id}] Start processing {len(video_list)} videos")
+    # logging.info(f"[Worker {worker_id}] Start processing {len(video_list)} videos")
 
     checkpoint_path = os.path.join(
         args.output_dir, f"checkpoint_worker_{worker_id}.txt"
@@ -154,7 +148,7 @@ def worker_process(worker_id, video_list, args):
             logging.warning(f"[Warning] No images found in {image_folder}")
             continue
 
-        logging.info(f"Processing video {video_id}, {len(image_paths)} frames")
+        # logging.info(f"Processing video {video_id}, {len(image_paths)} frames")
 
         video_results = []
 
@@ -163,20 +157,20 @@ def worker_process(worker_id, video_list, args):
         else:
             scale_w, scale_h = 1.0, 1.0
 
-        sampled_paths = sample_frames(image_paths, args.nframe,
-                                        save_index_path=os.path.join(args.output_dir, f'{video_id}_indices.txt'))
         resized_images = []
-        for p in sampled_paths:
+        for p in image_paths:
             img = Image.open(p)
             if args.resize:
                 img = resize_with_scale(img, scale_w)
             resized_images.append(img)
         scale = (scale_w, scale_h)
 
-        # resized_images = sample_frames(resized_images, args.nframe,
-        #                                save_index_path=os.path.join(args.output_dir, f'{video_id}_indices.txt'))
+        resized_images = sample_frames(resized_images, args.nframe)
 
-        logging.info(f"[Worker {worker_id}] Video {video_name} uses {args.nframe}({len(resized_images)}) frames")
+        sampled_images_path = sample_frames(image_paths, args.nframe)
+        logging.info(f"sampled_images_path: {sampled_images_path}")
+
+        # logging.info(f"[Worker {worker_id}] Video {video_name} uses {args.nframe} frames")
 
         for query in queries:
             if (video_name, query) in finished_pairs:
@@ -191,7 +185,48 @@ def worker_process(worker_id, video_list, args):
                 prompt = build_temporal_grounding_prompt(query)
 
             inputs = resized_images + [prompt]
-            ret = model.generate(inputs)
+
+            # messages = [
+            #     {
+            #         "role": "user",
+            #         "content": [
+            #             # {
+            #             #     "type": "image",
+            #             #     "url": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Grayscale_8bits_palette_sample_image.png"
+            #             # },
+            #             # {
+            #             #     "type": "text",
+            #             #     "text": "describe this image"
+            #             # }
+            #         ],
+            #     }
+            # ]
+            # for img in sampled_images_path:
+            #     message[0]["content"].append({
+            #         "type": "image",
+            #         "image": img
+            #     })
+            # message[0]["content"].append({
+            #     "type": "text",
+            #     "text": prompt
+            # })
+
+            message = []
+
+            # 加图片
+            for img in sampled_images_path:
+                message.append({
+                    "type": "image",
+                    "image": img  # 路径字符串
+                })
+
+            # 加文本
+            message.append({
+                "type": "text",
+                "text": prompt
+            })
+
+            ret = model.generate(message)
 
             video_results.append({
                 "scale": scale,
@@ -200,7 +235,7 @@ def worker_process(worker_id, video_list, args):
             })
             append_checkpoint(checkpoint_path, video_name, query)
             finished_pairs.add((video_name, query))
-            logging.info(f"[Worker {worker_id}] Video {video_id}, Query: {query}, Response: {ret}")
+            # logging.info(f"[Worker {worker_id}] Video {video_id}, Query: {query}, Response: {ret}")
 
         output_json_path = os.path.join(args.output_dir, f"{video_name}.json")
         with open(output_json_path, "w") as f:
@@ -249,8 +284,6 @@ def main():
         queries_data = json.load(f)
 
     video_items = list(queries_data.items())
-    video_items = video_items[:1]
-    print(f'video_items: {video_items}')
     num_workers = args.num_workers
 
     sub_lists = split_videos(video_items, num_workers)
